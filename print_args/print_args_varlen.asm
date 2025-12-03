@@ -9,7 +9,7 @@ sys_stdout	                equ	1
 
 exit_suc                    equ 0
 
-is_program_name_included    equ 1
+is_program_name_included    equ 0
 
 section .data
 	linebreak	db	0x0A	; ASCII character 10, a line break
@@ -28,7 +28,9 @@ _start:
     ; Handle is_program_name_included
     mov rax, is_program_name_included ; cmp expects source operand to be register
     cmp rax, 0x0
-    jnz loop_start
+    jnz loop_start ; Dont offset r13 if we want to print the program name
+    cmp QWORD [rsp], 0x1 ; argc = 1 when there are no arguments
+    jz exit ; No arguments to print, so exit
     inc r12
     mov r13, 0x8
 loop_start:
